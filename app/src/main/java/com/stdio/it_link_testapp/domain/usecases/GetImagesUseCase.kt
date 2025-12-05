@@ -13,10 +13,10 @@ import kotlinx.coroutines.sync.withPermit
 class GetImagesUseCase @Inject constructor(
     private val repository: ImageRepository
 ) {
-    suspend operator fun invoke(maxConcurrent: Int = 5): List<Flow<ThumbnailData<String>>> {
+    suspend operator fun invoke(): List<Flow<ThumbnailData<String>>> {
         val response = repository.getImages()
         val lines = response.split("\n")
-        val semaphore = Semaphore(maxConcurrent)
+        val semaphore = Semaphore(MAX_CONCURRENT)
 
         return coroutineScope {
             lines.mapIndexed { index, url ->
@@ -28,5 +28,9 @@ class GetImagesUseCase @Inject constructor(
                 }
             }.awaitAll()
         }
+    }
+
+    companion object {
+        const val MAX_CONCURRENT = 5
     }
 }
