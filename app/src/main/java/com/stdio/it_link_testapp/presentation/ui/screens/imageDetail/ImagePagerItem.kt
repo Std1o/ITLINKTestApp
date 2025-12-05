@@ -7,6 +7,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import coil.compose.AsyncImage
+import com.smarttoolfactory.zoom.rememberZoomState
+import com.smarttoolfactory.zoom.zoom
 import com.stdio.it_link_testapp.R
 import com.stdio.it_link_testapp.domain.model.ImageData
 import com.stdio.it_link_testapp.domain.model.LoadableData
@@ -23,10 +25,17 @@ fun ImagePagerItem(imageState: ImageData<String>) {
 
 @Composable
 fun Image(model: Any?) {
+    val zoomState = rememberZoomState(
+        minZoom = 1f,
+        maxZoom = 5f,
+        zoomable = true,
+        pannable = true,
+        limitPan = true,
+    )
     AsyncImage(
         model = model,
         contentDescription = "Image",
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().zoom(zoomState = zoomState),
         contentScale = ContentScale.Crop
     )
 }
