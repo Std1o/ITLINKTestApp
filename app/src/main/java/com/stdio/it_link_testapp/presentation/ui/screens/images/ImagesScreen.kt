@@ -12,14 +12,14 @@ import com.stdio.it_link_testapp.presentation.viewmodel.ImagesViewModel
 @Composable
 fun ImagesScreen(modifier: Modifier = Modifier, onItemClick: (Int) -> Unit) {
     val viewModel = hiltViewModel<ImagesViewModel>()
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState = viewModel.images
     val networkIsEnabled by viewModel.networkIsEnabled.collectAsState()
-    if (uiState.images.isEmpty() && !networkIsEnabled) {
+    if (uiState.isEmpty() && !networkIsEnabled) {
         CenteredColumn(modifier) {
             Text("Ожидание сети...")
         }
     } else {
-        ImageGrid(images = uiState.images, modifier = modifier, onItemClick) {
+        ImageGrid(images = uiState, modifier = modifier, onItemClick) {
             viewModel.reloadThumbnail(it)
         }
     }

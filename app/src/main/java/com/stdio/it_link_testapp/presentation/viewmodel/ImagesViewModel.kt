@@ -1,15 +1,15 @@
 package com.stdio.it_link_testapp.presentation.viewmodel
 
+import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.stdio.it_link_testapp.domain.model.ImageData
 import com.stdio.it_link_testapp.domain.repository.ImageRepository
 import com.stdio.it_link_testapp.domain.usecases.GetThumbnailsUseCase
 import com.stdio.it_link_testapp.domain.usecases.ReloadThumbnailUseCase
-import com.stdio.it_link_testapp.presentation.model.ImagesUIState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -20,8 +20,8 @@ class ImagesViewModel @Inject constructor(
     private val reloadThumbnailUseCase: ReloadThumbnailUseCase
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(ImagesUIState())
-    val uiState = _uiState.asStateFlow()
+    private val _images = mutableStateListOf<ImageData<String>>()
+    val images: List<ImageData<String>> = _images
 
     private val _networkIsEnabled = MutableStateFlow(false)
     val networkIsEnabled = _networkIsEnabled.asStateFlow()
@@ -31,7 +31,7 @@ class ImagesViewModel @Inject constructor(
             loadThumbnails()
             repository.observeNetworkState().collect {
                 _networkIsEnabled.value = it
-                if (uiState.value.images.isEmpty() && it) {
+                if (images.isEmpty() && it) {
                     loadThumbnails()
                 }
             }
@@ -42,7 +42,8 @@ class ImagesViewModel @Inject constructor(
         try {
             viewModelScope.launch {
                 getThumbnailsUseCase().collect { images ->
-                    _uiState.update { it.copy(images = images.toList()) }
+                    _images.clear()
+                    _images.addAll(images)
                 }
             }
         } catch (e: Exception) {
@@ -52,10 +53,8 @@ class ImagesViewModel @Inject constructor(
 
     fun reloadThumbnail(index: Int) {
         viewModelScope.launch {
-            val list = uiState.value.images.toMutableList()
             reloadThumbnailUseCase(index).collect { image ->
-                list[index] = image
-                _uiState.update { it.copy(images = list.toList()) }
+                _images[index] = image
             }
         }
     }
