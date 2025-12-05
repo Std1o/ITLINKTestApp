@@ -1,6 +1,6 @@
 package com.stdio.it_link_testapp.domain.model
 
-sealed interface LoadableData<out R> : ThumbnailData<R> {
+sealed interface LoadableData<out R> : ImageData<R> {
 
     data class Success<out T>(val data: T, ) : LoadableData<T>
 

@@ -15,10 +15,10 @@ fun ImagesScreen(modifier: Modifier = Modifier) {
     val uiState by viewModel.uiState.collectAsState()
     val networkIsEnabled by viewModel.networkIsEnabled.collectAsState()
     if (uiState.isEmpty() && !networkIsEnabled) {
-        CenteredColumn {
+        CenteredColumn(modifier) {
             Text("Ожидание сети...")
         }
     } else {
-        ImageGrid(images = uiState)
+        ImageGrid(images = uiState, modifier = modifier)
     }
 }

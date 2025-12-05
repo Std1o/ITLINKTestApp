@@ -15,14 +15,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.stdio.it_link_testapp.domain.model.LoadableData
-import com.stdio.it_link_testapp.domain.model.ThumbnailData
+import com.stdio.it_link_testapp.domain.model.ImageData
 import kotlinx.coroutines.flow.Flow
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ImageGrid(
-    images: List<Flow<ThumbnailData<String>>>,
-    modifier: Modifier = Modifier
+    images: List<Flow<ImageData<String>>>,
+    modifier: Modifier
 ) {
     LazyVerticalGrid(
         columns = GridCells.Adaptive(minSize = 100.dp),

@@ -9,10 +9,10 @@ import androidx.compose.ui.layout.ContentScale
 import coil.compose.AsyncImage
 import com.stdio.it_link_testapp.R
 import com.stdio.it_link_testapp.domain.model.LoadableData
-import com.stdio.it_link_testapp.domain.model.ThumbnailData
+import com.stdio.it_link_testapp.domain.model.ImageData
 
 @Composable
-fun ImageItem(imageState: ThumbnailData<String>) {
+fun ImageItem(imageState: ImageData<String>) {
     when (imageState) {
         is LoadableData.Error -> Text(imageState.exception)
         is LoadableData.Loading -> CircularProgressIndicator()
@@ -25,7 +25,7 @@ fun ImageItem(imageState: ThumbnailData<String>) {
             )
         }
 
-        is ThumbnailData.Placeholder -> {
+        is ImageData.Placeholder -> {
             AsyncImage(
                 model = R.drawable.no_image,
                 contentDescription = "Thumbnail",

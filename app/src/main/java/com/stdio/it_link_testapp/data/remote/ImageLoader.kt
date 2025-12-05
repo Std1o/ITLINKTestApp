@@ -4,11 +4,12 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import com.stdio.it_link_testapp.domain.model.LoadableData
-import com.stdio.it_link_testapp.domain.model.ThumbnailData
+import com.stdio.it_link_testapp.domain.model.ImageData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.io.File
@@ -28,7 +29,7 @@ class ImageLoader @Inject constructor(
         }
     }
 
-    fun loadThumbnail(url: String, index: Int): Flow<ThumbnailData<String>> =
+    fun loadThumbnail(url: String, index: Int): Flow<ImageData<String>> =
         flow {
             emit(LoadableData.Loading)
             try {
@@ -41,7 +42,7 @@ class ImageLoader @Inject constructor(
                 }
 
                 if (!url.startsWith("https")) {
-                    emit(ThumbnailData.Placeholder)
+                    emit(ImageData.Placeholder)
                     return@flow
                 }
 
@@ -66,7 +67,7 @@ class ImageLoader @Inject constructor(
                 val contentType = response.header("Content-Type", "")?.lowercase() ?: ""
                 val isImage = contentType.startsWith("image/")
                 if (!isImage) {
-                    emit(ThumbnailData.Placeholder)
+                    emit(ImageData.Placeholder)
                     return@flow
                 }
 
@@ -103,5 +104,47 @@ class ImageLoader @Inject constructor(
 
     private fun getThumbnailFile(index: Int): File {
         return File(imageCacheDir, "thumb_$index.jpg")
+    }
+
+    suspend fun loadOriginal(url: String, index: Int): ImageData<String> =
+        withContext(Dispatchers.IO) {
+            try {
+                val originalFile = getOriginalFile(index)
+
+                // Проверяем файловый кэш
+                if (originalFile.exists() && originalFile.length() > 0) {
+                    return@withContext LoadableData.Success(originalFile.absolutePath)
+                }
+
+                // Загружаем через OkHttp
+                val request = Request.Builder()
+                    .url(url)
+                    .header("User-Agent", "Mozilla/5.0")
+                    .build()
+
+                val response = okHttpClient.newCall(request).execute()
+
+                if (!response.isSuccessful) {
+                    return@withContext LoadableData.Error(
+                        exception = response.message,
+                        code = response.code
+                    )
+                }
+
+                response.body?.use { body ->
+                    originalFile.outputStream().use { output ->
+                        body.byteStream().copyTo(output)
+                    }
+
+                    LoadableData.Success(originalFile.absolutePath)
+                } ?: LoadableData.Error("Empty response body")
+
+            } catch (e: Exception) {
+                LoadableData.Error(e.message ?: "Unknown error")
+            }
+        }
+
+    private fun getOriginalFile(index: Int): File {
+        return File(imageCacheDir, "original_$index.jpg")
     }
 }

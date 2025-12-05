@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
+import com.stdio.it_link_testapp.presentation.ui.screens.MainScreen
 import com.stdio.it_link_testapp.presentation.ui.screens.images.ImagesScreen
 import com.stdio.it_link_testapp.presentation.ui.theme.ITLINKTestAppTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -20,7 +21,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             ITLINKTestAppTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    ImagesScreen(
+                    MainScreen(
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
