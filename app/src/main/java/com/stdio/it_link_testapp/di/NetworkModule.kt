@@ -1,9 +1,11 @@
 package com.stdio.it_link_testapp.di
 
+import android.app.Application
 import android.content.Context
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.stdio.it_link_testapp.BuildConfig
+import com.stdio.it_link_testapp.common.utils.NetworkMonitor
 import com.stdio.it_link_testapp.data.remote.CacheFirstInterceptor
 import com.stdio.it_link_testapp.data.remote.ImageApi
 import dagger.Module
@@ -68,5 +70,11 @@ object NetworkModule {
     @Singleton
     fun provideImageApi(retrofit: Retrofit): ImageApi {
         return retrofit.create(ImageApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideNetworkMonitor(application: Application): NetworkMonitor {
+        return NetworkMonitor(application)
     }
 }

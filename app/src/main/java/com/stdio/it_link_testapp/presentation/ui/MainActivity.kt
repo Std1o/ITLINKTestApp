@@ -6,13 +6,15 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.stdio.it_link_testapp.presentation.ui.components.CenteredColumn
 import com.stdio.it_link_testapp.presentation.ui.theme.ITLINKTestAppTheme
 import com.stdio.it_link_testapp.presentation.viewmodel.ImagesViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -38,9 +40,20 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
     val viewModel = hiltViewModel<ImagesViewModel>()
-    val uiState = viewModel.uiState.collectAsState()
-    Text(
-        text = uiState.value,
-        modifier = modifier
-    )
+    val uiState by viewModel.uiState.collectAsState()
+    val networkIsEnabled by viewModel.networkIsEnabled.collectAsState()
+    if (uiState.isEmpty() && !networkIsEnabled) {
+        CenteredColumn {
+            Text("Ожидание сети...")
+        }
+    } else {
+        LazyColumn {
+            item {
+                Text(
+                    text = uiState,
+                    modifier = modifier
+                )
+            }
+        }
+    }
 }
