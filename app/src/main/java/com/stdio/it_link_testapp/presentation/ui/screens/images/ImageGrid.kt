@@ -24,7 +24,8 @@ import kotlinx.coroutines.flow.Flow
 fun ImageGrid(
     images: List<Flow<ImageData<String>>>,
     modifier: Modifier,
-    onItemClick: (Int) -> Unit
+    onItemClick: (Int) -> Unit,
+    onRetry: (Int) -> Unit
 ) {
     LazyVerticalGrid(
         columns = GridCells.Adaptive(minSize = 100.dp),
@@ -41,7 +42,9 @@ fun ImageGrid(
                     .clickable { onItemClick(index) },
                 contentAlignment = Alignment.Center
             ) {
-                ImageItem(imageState)
+                ImageItem(imageState) {
+                    onRetry(index)
+                }
             }
         }
     }
