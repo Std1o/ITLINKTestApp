@@ -29,7 +29,7 @@ class ImageLoader @Inject constructor(
     }
 
     fun loadThumbnail(url: String, index: Int): Flow<ThumbnailData<String>> =
-        flow<ThumbnailData<String>> {
+        flow {
             emit(LoadableData.Loading)
             try {
                 val thumbnailFile = getThumbnailFile(index)
@@ -42,6 +42,7 @@ class ImageLoader @Inject constructor(
                 // Загружаем через OkHttp (уже с кэшированием от OkHttp)
                 val request = Request.Builder()
                     .url(url)
+                    .header("User-Agent", "Mozilla/5.0")
                     .build()
 
                 val response = okHttpClient.newCall(request).execute()
@@ -53,6 +54,13 @@ class ImageLoader @Inject constructor(
                             code = response.code
                         )
                     )
+                }
+
+                val contentType = response.header("Content-Type", "")?.lowercase() ?: ""
+                val isImage = contentType.startsWith("image/")
+                if (!isImage) {
+                    emit(ThumbnailData.Placeholder)
+                    return@flow
                 }
 
                 response.body?.use { body ->

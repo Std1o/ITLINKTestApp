@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -19,7 +18,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil.compose.AsyncImage
+import com.stdio.it_link_testapp.R
 import com.stdio.it_link_testapp.domain.model.LoadableData
+import com.stdio.it_link_testapp.domain.model.ThumbnailData
 import com.stdio.it_link_testapp.presentation.ui.components.CenteredColumn
 import com.stdio.it_link_testapp.presentation.ui.theme.ITLINKTestAppTheme
 import com.stdio.it_link_testapp.presentation.viewmodel.ImagesViewModel
@@ -56,16 +57,27 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
         LazyColumn {
             items(uiState) { item ->
                 val imageState by item.collectAsState(LoadableData.Loading)
-                if (imageState is LoadableData.Loading) {
-                    CircularProgressIndicator()
-                } else if (imageState is LoadableData.Success) {
-                    val image = (imageState as LoadableData.Success<String>).data
-                    AsyncImage(
-                        model = image,
-                        contentDescription = "Thumbnail",
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop
-                    )
+                when (imageState) {
+                    is LoadableData.Error -> Text((imageState as LoadableData.Error).exception)
+                    is LoadableData.Loading -> CircularProgressIndicator()
+                    is LoadableData.Success -> {
+                        val image = (imageState as LoadableData.Success<String>).data
+                        AsyncImage(
+                            model = image,
+                            contentDescription = "Thumbnail",
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
+
+                    is ThumbnailData.Placeholder -> {
+                        AsyncImage(
+                            model = R.drawable.no_image,
+                            contentDescription = "Thumbnail",
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
                 }
             }
         }
