@@ -1,6 +1,5 @@
-package com.stdio.it_link_testapp.ui.theme
+package com.stdio.it_link_testapp.presentation.ui.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
