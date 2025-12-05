@@ -14,12 +14,12 @@ fun ImagesScreen(modifier: Modifier = Modifier, onItemClick: (Int) -> Unit) {
     val viewModel = hiltViewModel<ImagesViewModel>()
     val uiState by viewModel.uiState.collectAsState()
     val networkIsEnabled by viewModel.networkIsEnabled.collectAsState()
-    if (uiState.isEmpty() && !networkIsEnabled) {
+    if (uiState.images.isEmpty() && !networkIsEnabled) {
         CenteredColumn(modifier) {
             Text("Ожидание сети...")
         }
     } else {
-        ImageGrid(images = uiState, modifier = modifier, onItemClick) {
+        ImageGrid(images = uiState.images, modifier = modifier, onItemClick) {
             viewModel.reloadThumbnail(it)
         }
     }

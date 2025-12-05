@@ -10,19 +10,15 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.stdio.it_link_testapp.domain.model.ImageData
-import com.stdio.it_link_testapp.domain.model.LoadableData
-import kotlinx.coroutines.flow.Flow
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ImageGrid(
-    images: List<Flow<ImageData<String>>>,
+    images: List<ImageData<String>>,
     modifier: Modifier,
     onItemClick: (Int) -> Unit,
     onRetry: (Int) -> Unit
@@ -34,15 +30,16 @@ fun ImageGrid(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        itemsIndexed(images) { index, item ->
-            val imageState by item.collectAsState(LoadableData.Loading)
+        itemsIndexed(
+            items = images,
+            key = { index, _ -> index }) { index, item ->
             Box(
                 modifier = Modifier
                     .aspectRatio(1f)
                     .clickable { onItemClick(index) },
                 contentAlignment = Alignment.Center
             ) {
-                ImageItem(imageState) {
+                ImageItem(item) {
                     onRetry(index)
                 }
             }
