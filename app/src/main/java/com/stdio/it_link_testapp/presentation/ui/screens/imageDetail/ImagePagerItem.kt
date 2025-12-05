@@ -16,22 +16,17 @@ fun ImagePagerItem(imageState: ImageData<String>) {
     when (imageState) {
         is LoadableData.Error -> Text(imageState.exception)
         is LoadableData.Loading -> CircularProgressIndicator()
-        is LoadableData.Success -> {
-            AsyncImage(
-                model = imageState.data,
-                contentDescription = "Thumbnail",
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop
-            )
-        }
-
-        is ImageData.Placeholder -> {
-            AsyncImage(
-                model = R.drawable.no_image,
-                contentDescription = "Thumbnail",
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop
-            )
-        }
+        is LoadableData.Success -> Image(imageState.data)
+        is ImageData.Placeholder -> Image(R.drawable.no_image)
     }
+}
+
+@Composable
+fun Image(model: Any?) {
+    AsyncImage(
+        model = model,
+        contentDescription = "Image",
+        modifier = Modifier.fillMaxSize(),
+        contentScale = ContentScale.Crop
+    )
 }
