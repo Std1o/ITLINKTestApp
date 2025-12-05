@@ -64,6 +64,9 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-slf4j:1.7.3")
+    // Coil
+    implementation("io.coil-kt:coil-compose:2.5.0")
     // Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)

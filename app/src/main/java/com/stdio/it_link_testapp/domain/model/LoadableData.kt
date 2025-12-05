@@ -1,0 +1,13 @@
+package com.stdio.it_link_testapp.domain.model
+
+sealed interface LoadableData<out R> : ThumbnailData<R> {
+
+    data class Success<out T>(val data: T, ) : LoadableData<T>
+
+    data class Error(
+        val exception: String,
+        val code: Int = -1,
+    ) : LoadableData<Nothing>
+
+    data object Loading : LoadableData<Nothing>
+}

@@ -4,5 +4,5 @@ import retrofit2.http.GET
 
 interface ImageApi {
     @GET("test/images.txt")
-    suspend fun getImagesList(): String
+    suspend fun getImages(): String
 }
