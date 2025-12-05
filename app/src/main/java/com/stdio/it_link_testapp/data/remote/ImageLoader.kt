@@ -37,9 +37,15 @@ class ImageLoader @Inject constructor(
                 // Проверяем файловый кэш
                 if (thumbnailFile.exists() && thumbnailFile.length() > 0) {
                     emit(LoadableData.Success(thumbnailFile.absolutePath))
+                    return@flow
                 }
 
-                // Загружаем через OkHttp (уже с кэшированием от OkHttp)
+                if (!url.startsWith("https")) {
+                    emit(ThumbnailData.Placeholder)
+                    return@flow
+                }
+
+                // Загружаем через OkHttp
                 val request = Request.Builder()
                     .url(url)
                     .header("User-Agent", "Mozilla/5.0")
@@ -54,6 +60,7 @@ class ImageLoader @Inject constructor(
                             code = response.code
                         )
                     )
+                    return@flow
                 }
 
                 val contentType = response.header("Content-Type", "")?.lowercase() ?: ""
@@ -73,17 +80,18 @@ class ImageLoader @Inject constructor(
                         val bitmap = BitmapFactory.decodeStream(inputStream, null, options)
                         if (bitmap == null) {
                             emit(LoadableData.Error("Failed to decode image"))
+                            return@flow
                         }
 
                         try {
                             // Сохраняем миниатюру
                             FileOutputStream(thumbnailFile).use { fos ->
-                                bitmap?.compress(Bitmap.CompressFormat.JPEG, 80, fos)
+                                bitmap.compress(Bitmap.CompressFormat.JPEG, 80, fos)
                             }
 
                             emit(LoadableData.Success(thumbnailFile.absolutePath))
                         } finally {
-                            bitmap?.recycle()
+                            bitmap.recycle()
                         }
                     }
                 } ?: emit(LoadableData.Error("Empty response body"))

@@ -1,0 +1,24 @@
+package com.stdio.it_link_testapp.presentation.ui.screens.images
+
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.stdio.it_link_testapp.presentation.ui.components.CenteredColumn
+import com.stdio.it_link_testapp.presentation.viewmodel.ImagesViewModel
+
+@Composable
+fun ImagesScreen(modifier: Modifier = Modifier) {
+    val viewModel = hiltViewModel<ImagesViewModel>()
+    val uiState by viewModel.uiState.collectAsState()
+    val networkIsEnabled by viewModel.networkIsEnabled.collectAsState()
+    if (uiState.isEmpty() && !networkIsEnabled) {
+        CenteredColumn {
+            Text("Ожидание сети...")
+        }
+    } else {
+        ImageGrid(images = uiState)
+    }
+}
