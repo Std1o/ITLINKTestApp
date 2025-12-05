@@ -157,4 +157,9 @@ class ImageLoader @Inject constructor(
     private fun getOriginalFile(index: Int): File {
         return File(imageCacheDir, "original_$index.jpg")
     }
+
+    fun clearImageCache(index: Int) {
+        getThumbnailFile(index).delete()
+        getOriginalFile(index).delete()
+    }
 }
