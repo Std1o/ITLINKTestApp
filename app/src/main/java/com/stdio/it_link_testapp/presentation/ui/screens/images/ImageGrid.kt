@@ -1,6 +1,7 @@
 package com.stdio.it_link_testapp.presentation.ui.screens.images
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -14,15 +15,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.stdio.it_link_testapp.domain.model.LoadableData
 import com.stdio.it_link_testapp.domain.model.ImageData
+import com.stdio.it_link_testapp.domain.model.LoadableData
 import kotlinx.coroutines.flow.Flow
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ImageGrid(
     images: List<Flow<ImageData<String>>>,
-    modifier: Modifier
+    modifier: Modifier,
+    onItemClick: (Int) -> Unit
 ) {
     LazyVerticalGrid(
         columns = GridCells.Adaptive(minSize = 100.dp),
@@ -34,7 +36,9 @@ fun ImageGrid(
         itemsIndexed(images) { index, item ->
             val imageState by item.collectAsState(LoadableData.Loading)
             Box(
-                modifier = Modifier.aspectRatio(1f),
+                modifier = Modifier
+                    .aspectRatio(1f)
+                    .clickable { onItemClick(index) },
                 contentAlignment = Alignment.Center
             ) {
                 ImageItem(imageState)

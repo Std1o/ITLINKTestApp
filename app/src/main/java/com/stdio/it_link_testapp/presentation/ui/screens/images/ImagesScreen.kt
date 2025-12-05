@@ -10,7 +10,7 @@ import com.stdio.it_link_testapp.presentation.ui.components.CenteredColumn
 import com.stdio.it_link_testapp.presentation.viewmodel.ImagesViewModel
 
 @Composable
-fun ImagesScreen(modifier: Modifier = Modifier) {
+fun ImagesScreen(modifier: Modifier = Modifier, onItemClick: (Int) -> Unit) {
     val viewModel = hiltViewModel<ImagesViewModel>()
     val uiState by viewModel.uiState.collectAsState()
     val networkIsEnabled by viewModel.networkIsEnabled.collectAsState()
@@ -19,6 +19,6 @@ fun ImagesScreen(modifier: Modifier = Modifier) {
             Text("Ожидание сети...")
         }
     } else {
-        ImageGrid(images = uiState, modifier = modifier)
+        ImageGrid(images = uiState, modifier = modifier, onItemClick)
     }
 }

@@ -3,13 +3,12 @@ package com.stdio.it_link_testapp.data.remote
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import com.stdio.it_link_testapp.domain.model.LoadableData
 import com.stdio.it_link_testapp.domain.model.ImageData
+import com.stdio.it_link_testapp.domain.model.LoadableData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.io.File
@@ -106,14 +105,15 @@ class ImageLoader @Inject constructor(
         return File(imageCacheDir, "thumb_$index.jpg")
     }
 
-    suspend fun loadOriginal(url: String, index: Int): ImageData<String> =
-        withContext(Dispatchers.IO) {
+    fun loadOriginal(url: String, index: Int): Flow<ImageData<String>> =
+        flow {
             try {
                 val originalFile = getOriginalFile(index)
 
                 // Проверяем файловый кэш
                 if (originalFile.exists() && originalFile.length() > 0) {
-                    return@withContext LoadableData.Success(originalFile.absolutePath)
+                    emit(LoadableData.Success(originalFile.absolutePath))
+                    return@flow
                 }
 
                 // Загружаем через OkHttp
@@ -125,10 +125,20 @@ class ImageLoader @Inject constructor(
                 val response = okHttpClient.newCall(request).execute()
 
                 if (!response.isSuccessful) {
-                    return@withContext LoadableData.Error(
-                        exception = response.message,
-                        code = response.code
+                    emit(
+                        LoadableData.Error(
+                            exception = response.message,
+                            code = response.code
+                        )
                     )
+                    return@flow
+                }
+
+                val contentType = response.header("Content-Type", "")?.lowercase() ?: ""
+                val isImage = contentType.startsWith("image/")
+                if (!isImage) {
+                    emit(ImageData.Placeholder)
+                    return@flow
                 }
 
                 response.body?.use { body ->
@@ -136,13 +146,13 @@ class ImageLoader @Inject constructor(
                         body.byteStream().copyTo(output)
                     }
 
-                    LoadableData.Success(originalFile.absolutePath)
-                } ?: LoadableData.Error("Empty response body")
+                    emit(LoadableData.Success(originalFile.absolutePath))
+                } ?: emit(LoadableData.Error("Empty response body"))
 
             } catch (e: Exception) {
-                LoadableData.Error(e.message ?: "Unknown error")
+                emit(LoadableData.Error(e.message ?: "Unknown error"))
             }
-        }
+        }.flowOn(Dispatchers.IO)
 
     private fun getOriginalFile(index: Int): File {
         return File(imageCacheDir, "original_$index.jpg")
