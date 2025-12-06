@@ -5,13 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.stdio.it_link_testapp.domain.model.Image
 import com.stdio.it_link_testapp.domain.model.ImageData
-import com.stdio.it_link_testapp.domain.repository.ImageRepository
 import com.stdio.it_link_testapp.domain.usecases.GetImagesUseCase
-import com.stdio.it_link_testapp.domain.usecases.GetThumbnailsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 

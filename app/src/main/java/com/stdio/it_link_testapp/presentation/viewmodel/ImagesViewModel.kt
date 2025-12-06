@@ -5,8 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.stdio.it_link_testapp.domain.model.Image
 import com.stdio.it_link_testapp.domain.model.ImageData
+import com.stdio.it_link_testapp.domain.model.LoadableData
 import com.stdio.it_link_testapp.domain.repository.ImageRepository
-import com.stdio.it_link_testapp.domain.usecases.GetThumbnailsUseCase
+import com.stdio.it_link_testapp.domain.usecases.GetRawImagesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,7 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ImagesViewModel @Inject constructor(
     private val repository: ImageRepository,
-    private val getThumbnailsUseCase: GetThumbnailsUseCase,
+    private val getRawImagesUseCase: GetRawImagesUseCase,
 ) : ViewModel() {
 
     private val _images = mutableStateListOf<ImageData<Image>>()
@@ -27,7 +28,6 @@ class ImagesViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            loadThumbnails()
             repository.observeNetworkState().collect {
                 _networkIsEnabled.value = it
                 if (images.isEmpty() && it) {
@@ -37,12 +37,15 @@ class ImagesViewModel @Inject constructor(
         }
     }
 
-    private fun loadThumbnails() {
+    private suspend fun loadThumbnails() {
         try {
-            viewModelScope.launch {
-                getThumbnailsUseCase().collect { images ->
-                    _images.clear()
-                    _images.addAll(images)
+            _images.clear()
+            val rawImages = getRawImagesUseCase()
+            repeat(rawImages.size) { _images.add(LoadableData.Loading) }
+
+            rawImages.forEachIndexed { index, _ ->
+                repository.loadThumbnail(rawImages[index], index).collect {
+                    _images[index] = it
                 }
             }
         } catch (e: Exception) {
