@@ -2,4 +2,7 @@
     <string name="app_name">IT-LINK-TestApp</string>
     <string name="retry">Повторить</string>
     <string name="share_image">Поделиться изображением</string>
+    <string name="failed_to_decode_image">Failed to decode image</string>
+    <string name="empty_response_body">Empty response body</string>
+    <string name="unknown_error">Unknown error</string>
 </resources>

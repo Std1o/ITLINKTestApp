@@ -3,6 +3,7 @@ package com.stdio.it_link_testapp.data.remote
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import com.stdio.it_link_testapp.R
 import com.stdio.it_link_testapp.domain.model.Image
 import com.stdio.it_link_testapp.domain.model.ImageData
 import com.stdio.it_link_testapp.domain.model.LoadableData
@@ -24,7 +25,7 @@ class ImageLoader @Inject constructor(
 ) {
 
     private val imageCacheDir by lazy {
-        File(context.cacheDir, "images").apply {
+        File(context.cacheDir, IMAGES_DIR).apply {
             if (!exists()) mkdirs()
         }
     }
@@ -41,7 +42,7 @@ class ImageLoader @Inject constructor(
                     return@flow
                 }
 
-                if (!url.startsWith("https")) {
+                if (!url.startsWith(HTTPS_SUFFIX)) {
                     emit(ImageData.Placeholder)
                     return@flow
                 }
@@ -49,7 +50,7 @@ class ImageLoader @Inject constructor(
                 // Загружаем через OkHttp
                 val request = Request.Builder()
                     .url(url)
-                    .header("User-Agent", "Mozilla/5.0")
+                    .header("User-Agent", USER_AGENT)
                     .build()
 
                 val response = okHttpClient.newCall(request).execute()
@@ -66,7 +67,7 @@ class ImageLoader @Inject constructor(
                 }
 
                 val contentType = response.header("Content-Type", "")?.lowercase() ?: ""
-                val isImage = contentType.startsWith("image/")
+                val isImage = contentType.startsWith(IMAGE_CONTENT_TYPE)
                 if (!isImage) {
                     emit(ImageData.Placeholder)
                     return@flow
@@ -81,7 +82,12 @@ class ImageLoader @Inject constructor(
 
                         val bitmap = BitmapFactory.decodeStream(inputStream, null, options)
                         if (bitmap == null) {
-                            emit(LoadableData.Error("Failed to decode image", url = url))
+                            emit(
+                                LoadableData.Error(
+                                    exception = context.getString(R.string.failed_to_decode_image),
+                                    url = url
+                                )
+                            )
                             return@flow
                         }
 
@@ -100,10 +106,20 @@ class ImageLoader @Inject constructor(
                             bitmap.recycle()
                         }
                     }
-                } ?: emit(LoadableData.Error("Empty response body", url = url))
+                } ?: emit(
+                    LoadableData.Error(
+                        exception = context.getString(R.string.empty_response_body),
+                        url = url
+                    )
+                )
 
             } catch (e: Exception) {
-                emit(LoadableData.Error(e.message ?: "Unknown error", url = url))
+                emit(
+                    LoadableData.Error(
+                        exception = e.message ?: context.getString(R.string.unknown_error),
+                        url = url
+                    )
+                )
             }
         }.flowOn(Dispatchers.IO)
 
@@ -122,10 +138,15 @@ class ImageLoader @Inject constructor(
                     return@flow
                 }
 
+                if (!url.startsWith(HTTPS_SUFFIX)) {
+                    emit(ImageData.Placeholder)
+                    return@flow
+                }
+
                 // Загружаем через OkHttp
                 val request = Request.Builder()
                     .url(url)
-                    .header("User-Agent", "Mozilla/5.0")
+                    .header("User-Agent", USER_AGENT)
                     .build()
 
                 val response = okHttpClient.newCall(request).execute()
@@ -142,7 +163,7 @@ class ImageLoader @Inject constructor(
                 }
 
                 val contentType = response.header("Content-Type", "")?.lowercase() ?: ""
-                val isImage = contentType.startsWith("image/")
+                val isImage = contentType.startsWith(IMAGE_CONTENT_TYPE)
                 if (!isImage) {
                     emit(ImageData.Placeholder)
                     return@flow
@@ -154,10 +175,20 @@ class ImageLoader @Inject constructor(
                     }
 
                     emit(LoadableData.Success(Image(path = originalFile.absolutePath, url = url)))
-                } ?: emit(LoadableData.Error("Empty response body", url = url))
+                } ?: emit(
+                    LoadableData.Error(
+                        exception = context.getString(R.string.empty_response_body),
+                        url = url
+                    )
+                )
 
             } catch (e: Exception) {
-                emit(LoadableData.Error(e.message ?: "Unknown error", url = url))
+                emit(
+                    LoadableData.Error(
+                        exception = e.message ?: context.getString(R.string.unknown_error),
+                        url = url
+                    )
+                )
             }
         }.flowOn(Dispatchers.IO)
 
@@ -168,5 +199,12 @@ class ImageLoader @Inject constructor(
     fun clearImageCache(index: Int) {
         getThumbnailFile(index).delete()
         getOriginalFile(index).delete()
+    }
+
+    companion object {
+        private const val USER_AGENT = "Mozilla/5.0"
+        private const val IMAGE_CONTENT_TYPE = "image/"
+        private const val HTTPS_SUFFIX = "https"
+        private const val IMAGES_DIR = "images"
     }
 }
