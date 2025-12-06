@@ -1,16 +1,12 @@
 package com.stdio.it_link_testapp.presentation.ui.screens.images
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.sizeIn
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -26,7 +22,7 @@ import com.stdio.it_link_testapp.domain.model.ImageData
 import com.stdio.it_link_testapp.domain.model.LoadableData
 
 @Composable
-fun ImageItem(imageState: ImageData<Image>, onRetry: () -> Unit) {
+fun ImageItem(imageState: ImageData<Image>, onRetry: (String) -> Unit) {
     when (imageState) {
         is LoadableData.Error -> {
             Box {
@@ -36,7 +32,7 @@ fun ImageItem(imageState: ImageData<Image>, onRetry: () -> Unit) {
                         .padding(bottom = 8.dp)
                         .align(Alignment.BottomCenter)
                         .size(60.dp, 20.dp)
-                        .clickable(onClick = onRetry)
+                        .clickable(onClick = { onRetry(imageState.url) })
                 ) {
                     Text(
                         text = stringResource(R.string.retry),

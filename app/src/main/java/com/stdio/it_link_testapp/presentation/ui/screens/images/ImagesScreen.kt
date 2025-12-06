@@ -19,8 +19,8 @@ fun ImagesScreen(modifier: Modifier = Modifier, onItemClick: (Int) -> Unit) {
             Text("Ожидание сети...")
         }
     } else {
-        ImageGrid(images = uiState, modifier = modifier, onItemClick) {
-            viewModel.reloadThumbnail(it)
+        ImageGrid(images = uiState, modifier = modifier, onItemClick) { url, index ->
+            viewModel.reloadThumbnail(url, index)
         }
     }
 }

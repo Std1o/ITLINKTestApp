@@ -58,7 +58,8 @@ class ImageLoader @Inject constructor(
                     emit(
                         LoadableData.Error(
                             exception = response.message,
-                            code = response.code
+                            code = response.code,
+                            url = url
                         )
                     )
                     return@flow
@@ -80,7 +81,7 @@ class ImageLoader @Inject constructor(
 
                         val bitmap = BitmapFactory.decodeStream(inputStream, null, options)
                         if (bitmap == null) {
-                            emit(LoadableData.Error("Failed to decode image"))
+                            emit(LoadableData.Error("Failed to decode image", url = url))
                             return@flow
                         }
 
@@ -99,10 +100,10 @@ class ImageLoader @Inject constructor(
                             bitmap.recycle()
                         }
                     }
-                } ?: emit(LoadableData.Error("Empty response body"))
+                } ?: emit(LoadableData.Error("Empty response body", url = url))
 
             } catch (e: Exception) {
-                emit(LoadableData.Error(e.message ?: "Unknown error"))
+                emit(LoadableData.Error(e.message ?: "Unknown error", url = url))
             }
         }.flowOn(Dispatchers.IO)
 
@@ -133,7 +134,8 @@ class ImageLoader @Inject constructor(
                     emit(
                         LoadableData.Error(
                             exception = response.message,
-                            code = response.code
+                            code = response.code,
+                            url = url
                         )
                     )
                     return@flow
@@ -152,10 +154,10 @@ class ImageLoader @Inject constructor(
                     }
 
                     emit(LoadableData.Success(Image(path = originalFile.absolutePath, url = url)))
-                } ?: emit(LoadableData.Error("Empty response body"))
+                } ?: emit(LoadableData.Error("Empty response body", url = url))
 
             } catch (e: Exception) {
-                emit(LoadableData.Error(e.message ?: "Unknown error"))
+                emit(LoadableData.Error(e.message ?: "Unknown error", url = url))
             }
         }.flowOn(Dispatchers.IO)
 

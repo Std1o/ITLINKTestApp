@@ -22,7 +22,7 @@ fun ImageGrid(
     images: List<ImageData<Image>>,
     modifier: Modifier,
     onItemClick: (Int) -> Unit,
-    onRetry: (Int) -> Unit
+    onRetry: (String, Int) -> Unit
 ) {
     LazyVerticalGrid(
         columns = GridCells.Adaptive(minSize = 100.dp),
@@ -40,8 +40,8 @@ fun ImageGrid(
                     .clickable { onItemClick(index) },
                 contentAlignment = Alignment.Center
             ) {
-                ImageItem(item) {
-                    onRetry(index)
+                ImageItem(item) { url ->
+                    onRetry(url, index)
                 }
             }
         }
