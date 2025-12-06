@@ -18,7 +18,7 @@ import net.engawapg.lib.zoomable.zoomable
 @Composable
 fun ImagePagerItem(imageState: ImageData<Image>) {
     when (imageState) {
-        is LoadableData.Error -> Text(imageState.exception)
+        is LoadableData.Error -> Image(R.drawable.no_image)
         is LoadableData.Loading -> {
             CenteredColumn {
                 CircularProgressIndicator()
