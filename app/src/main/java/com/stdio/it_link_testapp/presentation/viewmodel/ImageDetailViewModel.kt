@@ -3,6 +3,7 @@ package com.stdio.it_link_testapp.presentation.viewmodel
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.stdio.it_link_testapp.domain.model.Image
 import com.stdio.it_link_testapp.domain.model.ImageData
 import com.stdio.it_link_testapp.domain.repository.ImageRepository
 import com.stdio.it_link_testapp.domain.usecases.GetImagesUseCase
@@ -19,8 +20,8 @@ class ImageDetailViewModel @Inject constructor(
     private val getImagesUseCase: GetImagesUseCase
 ) : ViewModel() {
 
-    private val _images = mutableStateListOf<ImageData<String>>()
-    val images: List<ImageData<String>> = _images
+    private val _images = mutableStateListOf<ImageData<Image>>()
+    val images: List<ImageData<Image>> = _images
 
     init {
         viewModelScope.launch {

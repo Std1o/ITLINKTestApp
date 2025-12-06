@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import coil.compose.AsyncImage
 import com.stdio.it_link_testapp.R
+import com.stdio.it_link_testapp.domain.model.Image
 import com.stdio.it_link_testapp.domain.model.ImageData
 import com.stdio.it_link_testapp.domain.model.LoadableData
 import com.stdio.it_link_testapp.presentation.ui.components.CenteredColumn
@@ -15,7 +16,7 @@ import net.engawapg.lib.zoomable.rememberZoomState
 import net.engawapg.lib.zoomable.zoomable
 
 @Composable
-fun ImagePagerItem(imageState: ImageData<String>) {
+fun ImagePagerItem(imageState: ImageData<Image>) {
     when (imageState) {
         is LoadableData.Error -> Text(imageState.exception)
         is LoadableData.Loading -> {
@@ -24,7 +25,7 @@ fun ImagePagerItem(imageState: ImageData<String>) {
             }
         }
 
-        is LoadableData.Success -> Image(imageState.data)
+        is LoadableData.Success -> Image(imageState.data.path)
         is ImageData.Placeholder -> Image(R.drawable.no_image)
     }
 }

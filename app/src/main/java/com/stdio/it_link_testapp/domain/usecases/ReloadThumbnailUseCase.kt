@@ -1,5 +1,6 @@
 package com.stdio.it_link_testapp.domain.usecases
 
+import com.stdio.it_link_testapp.domain.model.Image
 import com.stdio.it_link_testapp.domain.model.ImageData
 import com.stdio.it_link_testapp.domain.repository.ImageRepository
 import kotlinx.coroutines.Dispatchers
@@ -10,7 +11,7 @@ import javax.inject.Inject
 class ReloadThumbnailUseCase @Inject constructor(
     private val repository: ImageRepository
 ) {
-    suspend operator fun invoke(index: Int): Flow<ImageData<String>> {
+    suspend operator fun invoke(index: Int): Flow<ImageData<Image>> {
         val response = withContext(Dispatchers.IO) { repository.getImages() }
         val lines = withContext(Dispatchers.Default) { response.split("\n") }
         val url = lines[index]

@@ -82,7 +82,7 @@ fun ImageDetailScreen(modifier: Modifier, index: Int) {
                 if (currentImage is LoadableData.Success) {
                     val shareIntent = Intent().apply {
                         action = Intent.ACTION_SEND
-                        putExtra(Intent.EXTRA_TEXT, currentImage.data)
+                        putExtra(Intent.EXTRA_TEXT, currentImage.data.url)
                         type = "text/plain"
                     }
                     context.startActivity(

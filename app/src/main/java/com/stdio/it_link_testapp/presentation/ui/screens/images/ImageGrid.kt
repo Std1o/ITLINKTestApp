@@ -13,12 +13,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.stdio.it_link_testapp.domain.model.Image
 import com.stdio.it_link_testapp.domain.model.ImageData
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ImageGrid(
-    images: List<ImageData<String>>,
+    images: List<ImageData<Image>>,
     modifier: Modifier,
     onItemClick: (Int) -> Unit,
     onRetry: (Int) -> Unit

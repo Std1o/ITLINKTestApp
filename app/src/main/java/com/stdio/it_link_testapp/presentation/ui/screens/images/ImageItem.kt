@@ -21,11 +21,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.stdio.it_link_testapp.R
+import com.stdio.it_link_testapp.domain.model.Image
 import com.stdio.it_link_testapp.domain.model.ImageData
 import com.stdio.it_link_testapp.domain.model.LoadableData
 
 @Composable
-fun ImageItem(imageState: ImageData<String>, onRetry: () -> Unit) {
+fun ImageItem(imageState: ImageData<Image>, onRetry: () -> Unit) {
     when (imageState) {
         is LoadableData.Error -> {
             Box {
@@ -48,7 +49,7 @@ fun ImageItem(imageState: ImageData<String>, onRetry: () -> Unit) {
         }
 
         is LoadableData.Loading -> CircularProgressIndicator()
-        is LoadableData.Success -> Image(imageState.data)
+        is LoadableData.Success -> Image(imageState.data.path)
         is ImageData.Placeholder -> Image(R.drawable.no_image)
     }
 }

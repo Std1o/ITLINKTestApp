@@ -3,6 +3,7 @@ package com.stdio.it_link_testapp.data.remote
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import com.stdio.it_link_testapp.domain.model.Image
 import com.stdio.it_link_testapp.domain.model.ImageData
 import com.stdio.it_link_testapp.domain.model.LoadableData
 import kotlinx.coroutines.Dispatchers
@@ -28,7 +29,7 @@ class ImageLoader @Inject constructor(
         }
     }
 
-    fun loadThumbnail(url: String, index: Int): Flow<ImageData<String>> =
+    fun loadThumbnail(url: String, index: Int): Flow<ImageData<Image>> =
         flow {
             emit(LoadableData.Loading)
             try {
@@ -36,7 +37,7 @@ class ImageLoader @Inject constructor(
 
                 // Проверяем файловый кэш
                 if (thumbnailFile.exists() && thumbnailFile.length() > 0) {
-                    emit(LoadableData.Success(thumbnailFile.absolutePath))
+                    emit(LoadableData.Success(Image(path = thumbnailFile.absolutePath, url = url)))
                     return@flow
                 }
 
@@ -89,7 +90,11 @@ class ImageLoader @Inject constructor(
                                 bitmap.compress(Bitmap.CompressFormat.JPEG, 80, fos)
                             }
 
-                            emit(LoadableData.Success(thumbnailFile.absolutePath))
+                            emit(
+                                LoadableData.Success(
+                                    Image(path = thumbnailFile.absolutePath, url = url)
+                                )
+                            )
                         } finally {
                             bitmap.recycle()
                         }
@@ -105,14 +110,14 @@ class ImageLoader @Inject constructor(
         return File(imageCacheDir, "thumb_$index.jpg")
     }
 
-    fun loadOriginal(url: String, index: Int): Flow<ImageData<String>> =
+    fun loadOriginal(url: String, index: Int): Flow<ImageData<Image>> =
         flow {
             try {
                 val originalFile = getOriginalFile(index)
 
                 // Проверяем файловый кэш
                 if (originalFile.exists() && originalFile.length() > 0) {
-                    emit(LoadableData.Success(originalFile.absolutePath))
+                    emit(LoadableData.Success(Image(path = originalFile.absolutePath, url = url)))
                     return@flow
                 }
 
@@ -146,7 +151,7 @@ class ImageLoader @Inject constructor(
                         body.byteStream().copyTo(output)
                     }
 
-                    emit(LoadableData.Success(originalFile.absolutePath))
+                    emit(LoadableData.Success(Image(path = originalFile.absolutePath, url = url)))
                 } ?: emit(LoadableData.Error("Empty response body"))
 
             } catch (e: Exception) {
