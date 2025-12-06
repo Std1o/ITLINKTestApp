@@ -23,7 +23,7 @@ class ImagesViewModel @Inject constructor(
     private val _images = mutableStateListOf<ImageData<Image>>()
     val images: List<ImageData<Image>> = _images
 
-    private val _networkIsEnabled = MutableStateFlow(false)
+    private val _networkIsEnabled = MutableStateFlow(true)
     val networkIsEnabled = _networkIsEnabled.asStateFlow()
 
     init {
