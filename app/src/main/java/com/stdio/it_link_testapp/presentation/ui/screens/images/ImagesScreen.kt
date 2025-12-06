@@ -1,5 +1,6 @@
 package com.stdio.it_link_testapp.presentation.ui.screens.images
 
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -15,7 +16,7 @@ fun ImagesScreen(modifier: Modifier = Modifier, onItemClick: (Int) -> Unit) {
     val uiState = viewModel.images
     val networkIsEnabled by viewModel.networkIsEnabled.collectAsState()
     if (uiState.isEmpty() && !networkIsEnabled) {
-        CenteredColumn(modifier) {
+        CenteredColumn(modifier.fillMaxSize()) {
             Text("Ожидание сети...")
         }
     } else {

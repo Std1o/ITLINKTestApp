@@ -28,9 +28,10 @@ class ImagesViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
+            loadThumbnails()
             repository.observeNetworkState().collect {
                 _networkIsEnabled.value = it
-                if (images.isEmpty() && it) {
+                if (_images.isEmpty() && it) {
                     loadThumbnails()
                 }
             }
