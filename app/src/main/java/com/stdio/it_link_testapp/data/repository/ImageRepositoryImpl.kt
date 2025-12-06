@@ -1,6 +1,7 @@
 package com.stdio.it_link_testapp.data.repository
 
 import com.stdio.it_link_testapp.common.utils.NetworkMonitor
+import com.stdio.it_link_testapp.data.local.ImagesCacheManager
 import com.stdio.it_link_testapp.data.remote.ImageApi
 import com.stdio.it_link_testapp.data.remote.ImageLoader
 import com.stdio.it_link_testapp.domain.model.Image
@@ -12,9 +13,15 @@ import javax.inject.Inject
 class ImageRepositoryImpl @Inject constructor(
     private val imageApi: ImageApi,
     private val networkMonitor: NetworkMonitor,
-    private val imageLoader: ImageLoader
+    private val imageLoader: ImageLoader,
+    private val imagesCacheManager: ImagesCacheManager
 ) : ImageRepository {
-    override suspend fun getImages() = imageApi.getImages()
+    override suspend fun getImages(): String {
+        return imagesCacheManager.getCache() ?: imageApi.getImages().also {
+            imagesCacheManager.saveCache(it)
+        }
+    }
+
     override suspend fun loadThumbnail(
         url: String,
         index: Int
