@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">IT-LINK-TestApp</string>
     <string name="retry">Повторить</string>
+    <string name="share_image">Поделиться изображением</string>
 </resources>

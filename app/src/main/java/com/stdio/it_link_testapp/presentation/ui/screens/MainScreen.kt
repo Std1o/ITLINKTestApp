@@ -23,7 +23,7 @@ fun MainScreen(modifier: Modifier) {
 
         composable("detail/{index}") { backStackEntry ->
             val index = backStackEntry.arguments?.getString("index")?.toIntOrNull() ?: 0
-            ImageDetailScreen(index)
+            ImageDetailScreen(modifier, index)
         }
     }
 }
