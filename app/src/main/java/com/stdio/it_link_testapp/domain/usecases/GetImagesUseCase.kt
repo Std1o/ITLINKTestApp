@@ -7,11 +7,13 @@ import javax.inject.Inject
 
 class GetImagesUseCase @Inject constructor(
     private val repository: ImageRepository,
-    private val processImagesListUseCase: ProcessImagesListUseCase
+    private val processImagesListUseCase: ProcessImagesListUseCase,
+    private val convertImagesFlowUseCase: ConvertImagesFlowUseCase
 ) {
-    suspend operator fun invoke(): List<Flow<ImageData<String>>> {
-        return processImagesListUseCase { url, index ->
+    suspend operator fun invoke(): Flow<List<ImageData<String>>> {
+        val flows = processImagesListUseCase { url, index ->
             repository.loadImage(url, index)
         }
+        return convertImagesFlowUseCase(flows)
     }
 }

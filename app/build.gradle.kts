@@ -66,7 +66,7 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     implementation(libs.androidx.material.icons.extended)
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-slf4j:1.7.3")
-    implementation("com.github.SmartToolFactory:Compose-Zoom:0.5.0")
+    implementation("net.engawapg.lib:zoomable:1.5.1")
     // Coil
     implementation("io.coil-kt:coil-compose:2.5.0")
     // Hilt

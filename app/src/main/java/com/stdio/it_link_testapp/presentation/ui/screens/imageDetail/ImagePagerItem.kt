@@ -7,17 +7,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import coil.compose.AsyncImage
-import com.smarttoolfactory.zoom.rememberZoomState
-import com.smarttoolfactory.zoom.zoom
 import com.stdio.it_link_testapp.R
 import com.stdio.it_link_testapp.domain.model.ImageData
 import com.stdio.it_link_testapp.domain.model.LoadableData
+import com.stdio.it_link_testapp.presentation.ui.components.CenteredColumn
+import net.engawapg.lib.zoomable.rememberZoomState
+import net.engawapg.lib.zoomable.zoomable
 
 @Composable
 fun ImagePagerItem(imageState: ImageData<String>) {
     when (imageState) {
         is LoadableData.Error -> Text(imageState.exception)
-        is LoadableData.Loading -> CircularProgressIndicator()
+        is LoadableData.Loading -> {
+            CenteredColumn {
+                CircularProgressIndicator()
+            }
+        }
+
         is LoadableData.Success -> Image(imageState.data)
         is ImageData.Placeholder -> Image(R.drawable.no_image)
     }
@@ -26,16 +32,14 @@ fun ImagePagerItem(imageState: ImageData<String>) {
 @Composable
 fun Image(model: Any?) {
     val zoomState = rememberZoomState(
-        minZoom = 1f,
-        maxZoom = 5f,
-        zoomable = true,
-        pannable = true,
-        limitPan = true,
+        maxScale = 5f
     )
     AsyncImage(
         model = model,
         contentDescription = "Image",
-        modifier = Modifier.fillMaxSize().zoom(zoomState = zoomState),
-        contentScale = ContentScale.Crop
+        modifier = Modifier
+            .fillMaxSize()
+            .zoomable(zoomState),
+        contentScale = ContentScale.Fit
     )
 }

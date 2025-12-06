@@ -1,5 +1,6 @@
 package com.stdio.it_link_testapp.presentation.viewmodel
 
+import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.stdio.it_link_testapp.domain.model.ImageData
@@ -18,13 +19,16 @@ class ImageDetailViewModel @Inject constructor(
     private val getImagesUseCase: GetImagesUseCase
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow<List<Flow<ImageData<String>>>>(emptyList())
-    val uiState = _uiState.asStateFlow()
+    private val _images = mutableStateListOf<ImageData<String>>()
+    val images: List<ImageData<String>> = _images
 
     init {
         viewModelScope.launch {
             try {
-                _uiState.value = getImagesUseCase()
+                getImagesUseCase().collect { images ->
+                    _images.clear()
+                    _images.addAll(images)
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
             }
