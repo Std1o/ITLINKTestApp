@@ -25,17 +25,8 @@ fun ImageGrid(
     onItemClick: (Int) -> Unit,
     onRetry: (String, Int) -> Unit
 ) {
-    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
-    val columns = (screenWidth / 120.dp).toInt().coerceAtLeast(1)
-    val actualCellWidth = screenWidth / columns
-    val finalColumns = if (actualCellWidth < 100.dp) {
-        (screenWidth / 100.dp).toInt().coerceAtLeast(1)
-    } else {
-        columns
-    }
-
     LazyVerticalGrid(
-        columns = GridCells.Fixed(finalColumns),
+        columns = GridCells.Fixed(calculateColumns(100.dp, 120.dp)),
         modifier = modifier,
         contentPadding = PaddingValues(8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
