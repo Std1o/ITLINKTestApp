@@ -8,4 +8,5 @@
 
 Версии:
 Android Studio: Android Studio Otter | 2025.2.1 Patch 1
+
 Android: 6.0 - 16
