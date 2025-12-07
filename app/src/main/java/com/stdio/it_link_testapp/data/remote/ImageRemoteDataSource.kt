@@ -7,7 +7,7 @@ import javax.inject.Inject
 
 class ImageRemoteDataSource @Inject constructor(private val okHttpClient: OkHttpClient) {
 
-    fun getThumbnail(url: String): Response{
+    fun getImage(url: String): Response {
         val request = Request.Builder()
             .url(url)
             .header("User-Agent", USER_AGENT)

@@ -55,6 +55,14 @@ class ImageCache @Inject constructor(private val context: Context) {
         }
     }
 
+    fun saveOriginal(url: String, index: Int, inputStream: InputStream): ImageData<Image> {
+        val originalFile = getOriginalFile(index)
+        originalFile.outputStream().use { output ->
+            inputStream.copyTo(output)
+        }
+        return LoadableData.Success(Image(path = originalFile.absolutePath, url = url))
+    }
+
     fun clearImageCache(index: Int) {
         getThumbnailFile(index).delete()
         getOriginalFile(index).delete()

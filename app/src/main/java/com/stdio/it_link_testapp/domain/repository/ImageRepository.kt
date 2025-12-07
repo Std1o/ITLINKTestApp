@@ -10,6 +10,7 @@ interface ImageRepository {
     fun getThumbnailFile(index: Int): File
     fun clearImageCache(index: Int)
     suspend fun loadThumbnail(url: String, index: Int): ImageData<Image>
-    suspend fun loadImage(url: String, index: Int): Flow<ImageData<Image>>
+    fun getOriginalFile(index: Int): File
+    suspend fun loadImage(url: String, index: Int): ImageData<Image>
     fun observeNetworkState(): Flow<Boolean>
 }

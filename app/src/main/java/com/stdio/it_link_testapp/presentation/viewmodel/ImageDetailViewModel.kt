@@ -7,6 +7,7 @@ import com.stdio.it_link_testapp.domain.model.Image
 import com.stdio.it_link_testapp.domain.model.ImageData
 import com.stdio.it_link_testapp.domain.model.LoadableData
 import com.stdio.it_link_testapp.domain.repository.ImageRepository
+import com.stdio.it_link_testapp.domain.usecases.GetImageUseCase
 import com.stdio.it_link_testapp.domain.usecases.GetRawImagesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -16,6 +17,7 @@ import javax.inject.Inject
 class ImageDetailViewModel @Inject constructor(
     private val repository: ImageRepository,
     private val getRawImagesUseCase: GetRawImagesUseCase,
+    private val getImageUseCase: GetImageUseCase
 ) : ViewModel() {
 
     private val _images = mutableStateListOf<ImageData<Image>>()
@@ -29,7 +31,7 @@ class ImageDetailViewModel @Inject constructor(
                 repeat(rawImages.size) { _images.add(LoadableData.Loading) }
 
                 rawImages.forEachIndexed { index, _ ->
-                    repository.loadImage(rawImages[index], index).collect {
+                    getImageUseCase(rawImages[index], index).collect {
                         _images[index] = it
                     }
                 }

@@ -1,8 +1,6 @@
 package com.stdio.it_link_testapp.data.repository
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import com.stdio.it_link_testapp.R
 import com.stdio.it_link_testapp.common.utils.NetworkMonitor
 import com.stdio.it_link_testapp.data.local.ImageCache
@@ -14,14 +12,12 @@ import com.stdio.it_link_testapp.domain.model.Image
 import com.stdio.it_link_testapp.domain.model.ImageData
 import com.stdio.it_link_testapp.domain.model.LoadableData
 import com.stdio.it_link_testapp.domain.repository.ImageRepository
-import kotlinx.coroutines.flow.Flow
-import java.io.FileOutputStream
+import java.io.File
 import javax.inject.Inject
 
 class ImageRepositoryImpl @Inject constructor(
     private val imageApi: ImageApi,
     private val networkMonitor: NetworkMonitor,
-    private val imageLoader: ImageLoader,
     private val imagesCacheManager: ImagesCacheManager,
     private val imageCache: ImageCache,
     private val remoteDataSource: ImageRemoteDataSource,
@@ -40,7 +36,7 @@ class ImageRepositoryImpl @Inject constructor(
         url: String,
         index: Int
     ): ImageData<Image> {
-        val response = remoteDataSource.getThumbnail(url)
+        val response = remoteDataSource.getImage(url)
 
         if (!response.isSuccessful) {
             return LoadableData.Error(
@@ -65,10 +61,36 @@ class ImageRepositoryImpl @Inject constructor(
         )
     }
 
+    override fun getOriginalFile(index: Int) = imageCache.getOriginalFile(index)
+
     override suspend fun loadImage(
         url: String,
         index: Int
-    ) = imageLoader.loadOriginal(url, index)
+    ): ImageData<Image> {
+        val response = remoteDataSource.getImage(url)
+
+        if (!response.isSuccessful) {
+            return LoadableData.Error(
+                exception = response.message,
+                code = response.code,
+                url = url
+            )
+        }
+
+        val contentType = response.header("Content-Type", "")?.lowercase() ?: ""
+        val isImage = contentType.startsWith(IMAGE_CONTENT_TYPE)
+        if (!isImage) {
+            return ImageData.Placeholder
+        }
+
+        response.body?.use { body ->
+            return imageCache.saveOriginal(url, index, body.byteStream())
+        }
+        return LoadableData.Error(
+            exception = context.getString(R.string.empty_response_body),
+            url = url
+        )
+    }
 
     override fun observeNetworkState() = networkMonitor.isOnline
 
