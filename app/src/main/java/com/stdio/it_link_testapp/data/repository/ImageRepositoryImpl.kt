@@ -34,6 +34,7 @@ class ImageRepositoryImpl @Inject constructor(
     }
 
     override fun getThumbnailFile(index: Int) = imageCache.getThumbnailFile(index)
+    override fun clearImageCache(index: Int) = imageCache.clearImageCache(index)
 
     override suspend fun loadThumbnail(
         url: String,
@@ -68,14 +69,6 @@ class ImageRepositoryImpl @Inject constructor(
         url: String,
         index: Int
     ) = imageLoader.loadOriginal(url, index)
-
-    override suspend fun reloadThumbnail(
-        url: String,
-        index: Int
-    ): Flow<ImageData<Image>> {
-        imageLoader.clearImageCache(index)
-        return imageLoader.loadThumbnail(url, index)
-    }
 
     override fun observeNetworkState() = networkMonitor.isOnline
 

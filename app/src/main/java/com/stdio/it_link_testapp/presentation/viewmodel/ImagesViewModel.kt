@@ -9,6 +9,7 @@ import com.stdio.it_link_testapp.domain.model.LoadableData
 import com.stdio.it_link_testapp.domain.repository.ImageRepository
 import com.stdio.it_link_testapp.domain.usecases.GetRawImagesUseCase
 import com.stdio.it_link_testapp.domain.usecases.GetThumbnailUseCase
+import com.stdio.it_link_testapp.domain.usecases.ReloadThumbnailUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -19,7 +20,8 @@ import javax.inject.Inject
 class ImagesViewModel @Inject constructor(
     private val repository: ImageRepository,
     private val getRawImagesUseCase: GetRawImagesUseCase,
-    private val getThumbnailUseCase: GetThumbnailUseCase
+    private val getThumbnailUseCase: GetThumbnailUseCase,
+    private val reloadThumbnailUseCase: ReloadThumbnailUseCase
 ) : ViewModel() {
 
     private val _images = mutableStateListOf<ImageData<Image>>()
@@ -58,7 +60,7 @@ class ImagesViewModel @Inject constructor(
 
     fun reloadThumbnail(url: String, index: Int) {
         viewModelScope.launch {
-            repository.reloadThumbnail(url, index).collect { image ->
+            reloadThumbnailUseCase(url, index).collect { image ->
                 _images[index] = image
             }
         }
