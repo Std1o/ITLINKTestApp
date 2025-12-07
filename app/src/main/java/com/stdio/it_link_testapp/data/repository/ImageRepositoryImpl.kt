@@ -6,13 +6,11 @@ import com.stdio.it_link_testapp.common.utils.NetworkMonitor
 import com.stdio.it_link_testapp.data.local.ImageCache
 import com.stdio.it_link_testapp.data.local.ImagesCacheManager
 import com.stdio.it_link_testapp.data.remote.ImageApi
-import com.stdio.it_link_testapp.data.remote.ImageLoader
 import com.stdio.it_link_testapp.data.remote.ImageRemoteDataSource
 import com.stdio.it_link_testapp.domain.model.Image
 import com.stdio.it_link_testapp.domain.model.ImageData
 import com.stdio.it_link_testapp.domain.model.LoadableData
 import com.stdio.it_link_testapp.domain.repository.ImageRepository
-import java.io.File
 import javax.inject.Inject
 
 class ImageRepositoryImpl @Inject constructor(
