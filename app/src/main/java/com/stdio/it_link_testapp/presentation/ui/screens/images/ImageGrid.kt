@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import com.stdio.it_link_testapp.domain.model.Image
 import com.stdio.it_link_testapp.domain.model.ImageData
@@ -24,8 +25,17 @@ fun ImageGrid(
     onItemClick: (Int) -> Unit,
     onRetry: (String, Int) -> Unit
 ) {
+    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
+    val columns = (screenWidth / 120.dp).toInt().coerceAtLeast(1)
+    val actualCellWidth = screenWidth / columns
+    val finalColumns = if (actualCellWidth < 100.dp) {
+        (screenWidth / 100.dp).toInt().coerceAtLeast(1)
+    } else {
+        columns
+    }
+
     LazyVerticalGrid(
-        columns = GridCells.Adaptive(minSize = 100.dp),
+        columns = GridCells.Fixed(finalColumns),
         modifier = modifier,
         contentPadding = PaddingValues(8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
