@@ -12,6 +12,8 @@ class GetThumbnailUseCase @Inject constructor(
 ) {
     operator fun invoke(url: String, index: Int): Flow<ImageData<Image>> {
         val thumbnailFile = repository.getThumbnailFile(index)
-        return processImageUseCase(url, index, thumbnailFile)
+        return processImageUseCase(url, index, thumbnailFile) {
+            repository.loadThumbnail(url, index)
+        }
     }
 }

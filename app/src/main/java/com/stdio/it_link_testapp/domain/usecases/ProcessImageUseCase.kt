@@ -14,10 +14,14 @@ import java.io.File
 import javax.inject.Inject
 
 class ProcessImageUseCase @Inject constructor(
-    private val repository: ImageRepository,
     private val context: Context
 ) {
-    operator fun invoke(url: String, index: Int, file: File): Flow<ImageData<Image>> =
+    operator fun invoke(
+        url: String,
+        index: Int,
+        file: File,
+        call: suspend () -> ImageData<Image>
+    ): Flow<ImageData<Image>> =
         flow {
             emit(LoadableData.Loading)
             try {
@@ -33,7 +37,7 @@ class ProcessImageUseCase @Inject constructor(
                     return@flow
                 }
 
-                emit(repository.loadImage(url, index))
+                emit(call())
             } catch (e: Exception) {
                 emit(
                     LoadableData.Error(

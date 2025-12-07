@@ -12,6 +12,8 @@ class GetImageUseCase @Inject constructor(
 ) {
     operator fun invoke(url: String, index: Int): Flow<ImageData<Image>> {
         val originalFile = repository.getOriginalFile(index)
-        return processImageUseCase(url, index, originalFile)
+        return processImageUseCase(url, index, originalFile) {
+            repository.loadImage(url, index)
+        }
     }
 }
