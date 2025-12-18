@@ -1,7 +1,9 @@
 package com.stdio.it_link_testapp.di
 
 import com.stdio.it_link_testapp.data.repository.ImageRepositoryImpl
+import com.stdio.it_link_testapp.data.repository.ResourcesRepositoryImpl
 import com.stdio.it_link_testapp.domain.repository.ImageRepository
+import com.stdio.it_link_testapp.domain.repository.ResourcesRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -13,4 +15,7 @@ abstract class RepositoryModule {
 
     @Binds
     abstract fun bindImageRepository(repository: ImageRepositoryImpl): ImageRepository
+
+    @Binds
+    abstract fun bindResourcesRepository(repository: ResourcesRepositoryImpl): ResourcesRepository
 }

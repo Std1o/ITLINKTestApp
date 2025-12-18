@@ -5,6 +5,7 @@ import com.stdio.it_link_testapp.R
 import com.stdio.it_link_testapp.domain.model.Image
 import com.stdio.it_link_testapp.domain.model.ImageData
 import com.stdio.it_link_testapp.domain.model.LoadableData
+import com.stdio.it_link_testapp.domain.repository.ResourcesRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -13,7 +14,7 @@ import java.io.File
 import javax.inject.Inject
 
 class ProcessImageUseCase @Inject constructor(
-    private val context: Context
+    private val resourcesRepository: ResourcesRepository
 ) {
     operator fun invoke(
         url: String,
@@ -40,7 +41,7 @@ class ProcessImageUseCase @Inject constructor(
             } catch (e: Exception) {
                 emit(
                     LoadableData.Error(
-                        exception = e.message ?: context.getString(R.string.unknown_error),
+                        exception = e.message ?: resourcesRepository.getString(R.string.unknown_error),
                         url = url
                     )
                 )
