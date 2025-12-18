@@ -11,6 +11,8 @@ import com.stdio.it_link_testapp.domain.usecases.GetRawImagesUseCase
 import com.stdio.it_link_testapp.domain.usecases.GetThumbnailUseCase
 import com.stdio.it_link_testapp.domain.usecases.ReloadThumbnailUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -29,6 +31,9 @@ class ImagesViewModel @Inject constructor(
 
     private val _networkIsEnabled = MutableStateFlow(true)
     val networkIsEnabled = _networkIsEnabled.asStateFlow()
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private val thumbnailDispatcher = Dispatchers.IO.limitedParallelism(4)
 
     init {
         viewModelScope.launch {
@@ -49,8 +54,10 @@ class ImagesViewModel @Inject constructor(
             repeat(rawImages.size) { _images.add(LoadableData.Loading) }
 
             rawImages.forEachIndexed { index, _ ->
-                getThumbnailUseCase(rawImages[index], index).collect {
-                    _images[index] = it
+                viewModelScope.launch(thumbnailDispatcher) {
+                    getThumbnailUseCase(rawImages[index], index).collect {
+                        _images[index] = it
+                    }
                 }
             }
         } catch (e: Exception) {
