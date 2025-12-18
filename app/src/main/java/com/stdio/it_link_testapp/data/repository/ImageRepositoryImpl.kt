@@ -4,7 +4,7 @@ import android.content.Context
 import com.stdio.it_link_testapp.R
 import com.stdio.it_link_testapp.common.utils.NetworkMonitor
 import com.stdio.it_link_testapp.data.local.ImageCache
-import com.stdio.it_link_testapp.data.local.ImagesCacheManager
+import com.stdio.it_link_testapp.data.local.FileCache
 import com.stdio.it_link_testapp.data.remote.ImageApi
 import com.stdio.it_link_testapp.data.remote.ImageRemoteDataSource
 import com.stdio.it_link_testapp.domain.model.Image
@@ -17,14 +17,14 @@ import javax.inject.Inject
 class ImageRepositoryImpl @Inject constructor(
     private val imageApi: ImageApi,
     private val networkMonitor: NetworkMonitor,
-    private val imagesCacheManager: ImagesCacheManager,
+    private val fileCache: FileCache,
     private val imageCache: ImageCache,
     private val remoteDataSource: ImageRemoteDataSource,
     private val context: Context
 ) : ImageRepository {
     override suspend fun getImages(): String {
-        return imagesCacheManager.getCache() ?: imageApi.getImages().also {
-            imagesCacheManager.saveCache(it)
+        return fileCache.getCache() ?: imageApi.getImages().also {
+            fileCache.saveCache(it)
         }
     }
 

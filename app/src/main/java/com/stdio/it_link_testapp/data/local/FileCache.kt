@@ -4,7 +4,7 @@ import android.content.Context
 import java.io.File
 import javax.inject.Inject
 
-class ImagesCacheManager @Inject constructor(context: Context) {
+class FileCache @Inject constructor(context: Context) {
     private val cacheFile = File(context.cacheDir, "images_cache.txt")
 
     fun getCache(): String? {
